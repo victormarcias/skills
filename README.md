@@ -6,7 +6,7 @@ Victor's own [Claude Code skills](https://code.claude.com/docs/en/skills), kept 
 
 | Skill | What it does |
 | --- | --- |
-| [commit](commit/) | `/commit`: commits the current changes on the checked-out branch with one short message and no co-author line; pushes only if you say so. |
+| [commit](commit/) | Commits finished changes without asking (or on `/commit`) on the checked-out branch, with one short message and no co-author line; pushes only if you say so. |
 
 ## Layout
 
