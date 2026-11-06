@@ -6,7 +6,8 @@ Victor's own [Claude Code skills](https://code.claude.com/docs/en/skills), kept 
 
 | Skill | What it does |
 | --- | --- |
-| [commit](commit/) | Commits finished changes without asking (or on `/commit`) on the checked-out branch, with one short message and no co-author line; pushes only if you say so. |
+| [commit](commit/) | `/commit`: commits the current changes on the checked-out branch with one short message and no co-author line; pushes only if you say so. |
+| [install-skills](install-skills/) | `/install-skills`: copies every skill of the folder you are in into `~/.claude/skills/` so they load in any project. |
 
 ## Layout
 
@@ -22,16 +23,16 @@ Every skill has both files. The README summarizes; the instructions live only in
 
 ## How Claude Code picks a skill up
 
-Claude Code loads a skill from `<skills dir>/<skill-name>/SKILL.md`. The personal skills directory, `~/.claude/skills/`, is loaded in every project on this machine, and an entry there can be a symlink to a folder elsewhere on disk. So each skill here is exposed by linking it into that directory:
+Claude Code loads a skill from `<skills dir>/<skill-name>/SKILL.md`. The personal skills directory, `~/.claude/skills/`, is loaded in every project on this machine. So each skill here is exposed by copying it into that directory, from the root of this repo:
 
 ```bash
-ln -s ~/Documents/GitHub/skills/<skill-name> ~/.claude/skills/<skill-name>
+cp -R <skill-name> ~/.claude/skills/<skill-name>
 ```
 
-Edits to a linked skill are picked up in the current session without a restart. A skill added after Claude Code started may need `/reload-skills` the first time.
+A copy is not live: copy again after changing a skill. A skill added after Claude Code started may need `/reload-skills` the first time.
 
 ## Adding a skill
 
 1. Create `<skill-name>/SKILL.md` and `<skill-name>/README.md`.
-2. Link it into `~/.claude/skills/` as above.
+2. Copy it into `~/.claude/skills/` as above, or run `/install-skills`.
 3. Add a row to the table in this README.
