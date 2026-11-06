@@ -8,6 +8,7 @@ Victor's own [Claude Code skills](https://code.claude.com/docs/en/skills), kept 
 | --- | --- |
 | [commit](commit/) | `/commit`: commits the current changes on the checked-out branch with one short message and no co-author line; pushes only if you say so. |
 | [install-skills](install-skills/) | `/install-skills`: copies every skill of the folder you are in into `~/.claude/skills/` so they load in any project. |
+| [install-terminal-statusline](install-terminal-statusline/) | `/install-terminal-statusline`: writes the status line script and registers it in `~/.claude/settings.json`, so the terminal shows project, model and tokens. |
 
 ## Layout
 
