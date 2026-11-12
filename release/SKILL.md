@@ -19,8 +19,14 @@ both files in this format on first use.
 
 1. **Look first.** `git fetch origin main dev`. Confirm `main` already has
    every commit from `dev`: `git merge-base --is-ancestor origin/dev
-   origin/main`. If it fails, stop and tell the user to merge `dev` into
-   `main` first — `/release` never does that merge itself. Also confirm
+   origin/main`. If it fails, stop and tell the user `main` is missing
+   commits from `dev`, and ask whether to open a PR `main` ← `dev`
+   (`gh pr list --base main --head dev` first; if one is open, give its
+   link instead). On a yes, run `gh pr create --base main --head dev
+   --title "Merge dev into main"` with a short body summarising the commits
+   (`git log --oneline origin/main..origin/dev`) and **no** "Generated with
+   Claude Code" line. `/release` never does the merge itself; the user
+   merges the PR and runs `/release` again. Also confirm
    `git status --short` is clean on the branch checked out, there is a
    `github.com` remote, and `gh auth status` succeeds; stop and say so if
    any check fails.
