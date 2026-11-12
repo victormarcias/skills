@@ -1,3 +1,7 @@
 # install-skills
 
-`/install-skills` copies every skill of the folder you are in into `~/.claude/skills/`, so they load in any project on this machine. It asks before overwriting skills that are already installed. A copy is not live: run it again after changing a skill. Instructions: [SKILL.md](SKILL.md).
+`/install-skills` symlinks every skill of the folder you are in into
+`~/.claude/skills/`, so they load in any project on this machine and edits in
+the repo are live. It asks before replacing skills that are already installed
+and removes links to skills deleted from the repo. Instructions:
+[SKILL.md](SKILL.md).
