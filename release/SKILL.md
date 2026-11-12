@@ -1,6 +1,11 @@
 ---
 name: release
-description: Cut a new release of the current repo, working on dev and shipping through main. First run: promotes the CHANGELOG's Unreleased section (English and Spanish) into a dated version on dev and opens a "Release <tag>" PR into main. Run again after the PR is merged: tags main and publishes the GitHub Release. Runs only when the user invokes `/release`. The user works on `dev`, and
+description: Cut a new release of the current repo, working on dev and shipping through main. First run: promotes the CHANGELOG's Unreleased section (English and Spanish) into a dated version on dev and opens a "Release <tag>" PR into main. Run again after the PR is merged: tags main and publishes the GitHub Release.
+---
+
+# Release
+
+Runs only when the user invokes `/release`. The user works on `dev`, and
 `main` only ever changes through a pull request, so a release takes two runs
 of the same command, and `/release` works out which one this is:
 
@@ -29,8 +34,13 @@ both files in this format on first use.
 ## Run 1: prepare
 
 1. **Look first.** The checked-out branch must be `dev` and
-   `git status --short` must be clean; stop and say so if not. Then:
-   - If `git log --oneline origin/main..origin/dev` is empty, there is
+   `git status --short` must be clean; stop and say so if not. Bring `dev`
+   up to date with fast-forwards only: `git merge --ff-only origin/dev`,
+   then, if `dev` is an ancestor of `origin/main` (the merge commit of the
+   previous release PR), `git merge --ff-only origin/main`. If `main` has
+   commits `dev` lacks that are not just that merge commit, stop and say so.
+   Then:
+   - If `git log --oneline <last-tag>..origin/dev` is empty, there is
      nothing to release: say so and stop.
    - If `gh pr list --base main --head dev` shows an open PR, give its link
      and stop: the user merges it first.
