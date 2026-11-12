@@ -1,14 +1,16 @@
 ---
 name: release
-description: Cut a new tagged release of the current repo from main. Promotes the CHANGELOG's Unreleased section (English and Spanish) into a dated version, works out the semver bump, tags and pushes main, and publishes a GitHub Release with a short emoji-bulleted Highlights summary via `gh`. Runs only when the user invokes /release.
----
+description: Cut a new release of the current repo, working on dev and shipping through main. First run: promotes the CHANGELOG's Unreleased section (English and Spanish) into a dated version on dev and opens a "Release <tag>" PR into main. Run again after the PR is merged: tags main and publishes the GitHub Release. Runs only when the user invokes `/release`. The user works on `dev`, and
+`main` only ever changes through a pull request, so a release takes two runs
+of the same command, and `/release` works out which one this is:
 
-# Release
+- **Run 1 (prepare):** promotes the changelog on `dev`, pushes `dev` and opens
+  a `main` ← `dev` PR named after the new version, with its description
+  written, ready to merge.
+- **Run 2 (publish), after the user merged that PR:** tags `main` and
+  publishes the GitHub Release.
 
-Runs only when the user invokes `/release`. Cuts a release on `main`, even
-though the changes being released live on `dev` — `main` only ever moves by
-fast-forward merge from `dev`, so `/release` never switches branches or
-merges; it just checks the two are in sync.
+It never merges, pushes to `main` or switches branches.
 
 Follows the [Keep a Changelog](https://keepachangelog.com/) format already
 used in `CHANGELOG.md` / `CHANGELOG.es.md`: categories `Added`, `Changed`,
@@ -17,27 +19,29 @@ already present in the file), under a running `## [Unreleased]` section
 that gets promoted at release time. If a repo has no changelog yet, create
 both files in this format on first use.
 
-1. **Look first.** `git fetch origin main dev`. Confirm `main` already has
-   every commit from `dev`: `git merge-base --is-ancestor origin/dev
-   origin/main`. If it fails, stop and tell the user `main` is missing
-   commits from `dev`, and ask whether to open a PR `main` ← `dev`
-   (`gh pr list --base main --head dev` first; if one is open, give its
-   link instead). On a yes, run `gh pr create --base main --head dev
-   --title "Merge dev into main"` with a short body summarising the commits
-   (`git log --oneline origin/main..origin/dev`) and **no** "Generated with
-   Claude Code" line. `/release` never does the merge itself; the user
-   merges the PR and runs `/release` again. Also confirm
-   `git status --short` is clean on the branch checked out, there is a
-   `github.com` remote, and `gh auth status` succeeds; stop and say so if
-   any check fails.
+0. **Which run?** `git fetch origin main dev --tags`; there must be a
+   `github.com` remote and `gh auth status` must succeed (stop and say so if
+   not). Read the first `## [x.y.z]` heading of `CHANGELOG.md` on
+   `origin/main` (`git show origin/main:CHANGELOG.md`). If that version has no
+   tag yet, the release PR was merged: go to **Run 2** (step 10). Otherwise
+   continue with **Run 1**.
+
+## Run 1: prepare
+
+1. **Look first.** The checked-out branch must be `dev` and
+   `git status --short` must be clean; stop and say so if not. Then:
+   - If `git log --oneline origin/main..origin/dev` is empty, there is
+     nothing to release: say so and stop.
+   - If `gh pr list --base main --head dev` shows an open PR, give its link
+     and stop: the user merges it first.
 
 2. **Read the changelog's `## [Unreleased]` section** in `CHANGELOG.md`
    (and the mirrored one in `CHANGELOG.es.md`). This is the content to
    release — it was written as the work happened, so don't regenerate it
    from `git log`. Only if it is empty or the files don't exist yet, build
-   it from `git log <last-tag>..origin/dev --oneline` against `dev`,
-   grouped into the same categories, each entry a bold lead-in label plus a
-   short sentence, matching the house style already in the file.
+   it from `git log <last-tag>..origin/dev --oneline`, grouped into the same
+   categories, each entry a bold lead-in label plus a short sentence,
+   matching the house style already in the file.
 
 3. **Find the last tag:** `git describe --tags --abbrev=0 origin/main`.
    Match its exact style (prefix, digit count) for the new tag. If there is
@@ -59,41 +63,59 @@ both files in this format on first use.
 5. **Promote the section:** rename `## [Unreleased]` to
    `## [<tag>] - <YYYY-MM-DD>`, keep its categories and bullets as they are,
    and add a fresh, empty `## [Unreleased]` above it. Do the same, mirrored,
-   in `CHANGELOG.es.md`.
+   in `CHANGELOG.es.md`. Make sure no other heading already uses `<tag>`.
 
 6. **Update the compare-link footer** at the bottom of both files:
    `[Unreleased]: <repo-url>/compare/<tag>...HEAD` and
    `[<tag>]: <repo-url>/compare/<previous-tag>...<tag>` (or
    `<repo-url>/releases/tag/<tag>` when there is no previous tag).
 
-7. **Commit the changelog files** on the branch already checked out, one
-   short message (`Updates CHANGELOG for <tag>.`), following the `commit`
-   skill's conventions. This is an ordinary commit: it still needs the
-   user's explicit permission to push.
+7. **Commit the changelog files** on `dev`, one short message
+   (`Updates CHANGELOG for <tag>.`), following the `commit` skill's
+   conventions.
 
-8. **Tag and push, on `main`, without checking it out:**
-   `git tag -a <tag> origin/main -m "<title>"`, then
-   `git push origin <tag>`. This is the one tag action this skill does
-   without asking each time it runs — the global Git rule's standing
-   exception for `/release`; it still never touches branches or other tags.
+8. **Push `dev` and open the PR.** Invoking `/release` is the permission to
+   push `dev` for this. Write the description to a temp file and run
+   `gh pr create --base main --head dev --title "Release <tag>"
+   --body-file <file>`. The description has no "Generated with Claude Code"
+   line and contains:
+   - `## Highlights`: a short summary, not a copy of the changelog section:
+     one bullet per notable change, bold lead-in label like the changelog,
+     each starting with a fitting emoji (✨ added, 🔧 changed, 🗑️ removed,
+     🐛 fixed, 🔒 security), skipping minor items.
+   - A closing block:
 
-9. **Publish the GitHub Release** with a short, separate summary — not a
-   copy of the changelog section — as `## Highlights`: one bullet per
-   notable change, bold lead-in label like the changelog, each starting
-   with a fitting emoji (✨ added, 🔧 changed, 🗑️ removed, 🐛 fixed, 🔒
-   security), skipping minor items. Close with:
+     ```markdown
+     **Full changelog:** [CHANGELOG.md](<repo-url>/blob/dev/CHANGELOG.md) ·
+     [Español](<repo-url>/blob/dev/CHANGELOG.es.md)
 
-   ```markdown
-   **Full changelog:** [CHANGELOG.md](<repo-url>/blob/main/CHANGELOG.md) ·
-   [Español](<repo-url>/blob/main/CHANGELOG.es.md)
+     **Compare:** <repo-url>/compare/<previous-tag>...<tag>
+     ```
 
-   **Compare:** <repo-url>/compare/<previous-tag>...<tag>
-   ```
+   - A last line: merge with "Create a merge commit" (never squash or
+     rebase, which would make `dev` diverge from `main`).
 
-   Write it to a temp file and run `gh release create <tag> --title "<tag>"
-   --notes-file <file> --target main`.
+9. **Report**, in the chat's language and nothing else: the new tag, the
+   previous tag (or "first release"), the bump level chosen and why, and the
+   PR link. Tell the user to merge it with a merge commit and run `/release`
+   again.
 
-10. **Report**, in the chat's language and nothing else: the new tag, the
-    previous tag (or "first release"), the bump level chosen and why, and
-    the release URL `gh` returns. Remind the user the changelog commit is
-    still local if they haven't said to push.
+## Run 2: publish (the release PR is merged)
+
+10. **Check** that `git merge-base --is-ancestor origin/dev origin/main`
+    passes; if not, `main` is missing commits from `dev`: say so and stop.
+    Tag `main` without checking it out: `git tag -a <tag> origin/main -m
+    "<tag>"` then `git push origin <tag>`, where `<tag>` is the version found
+    in step 0. This is the one tag action the skill does without asking; it
+    never touches branches or other tags.
+
+11. **Publish the GitHub Release** with the same `## Highlights` summary as
+    the PR description (one emoji bullet per notable change; reuse it from
+    the merged PR's body, `gh pr list --base main --head dev --state merged
+    --limit 1 --json body`), closing with the full-changelog and compare
+    links, pointing at `main`. Write it to a temp file and run `gh release
+    create <tag> --title "<tag>" --notes-file <file> --target main`.
+
+12. **Report**: the tag and the release URL `gh` returns. `dev` is already
+    inside `main`, so it needs no sync; if the user wants both identical,
+    `git merge --ff-only origin/main` on `dev` does it.
