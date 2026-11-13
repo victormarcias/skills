@@ -7,6 +7,7 @@ Victor's own [Claude Code skills](https://code.claude.com/docs/en/skills), kept 
 | Skill | What it does |
 | --- | --- |
 | [commit](commit/) | `/commit`: commits the current changes on the checked-out branch with one short message and no co-author line; pushes only if you say so. |
+| [groom](groom/) | `/groom`: walks through the open questions one at a time as multiple-choice questions, with tables or charts when they help, and applies each answer. |
 | [install-skills](install-skills/) | `/install-skills`: symlinks every skill of the folder you are in into `~/.claude/skills/` so they load in any project. |
 | [install-terminal-statusline](install-terminal-statusline/) | `/install-terminal-statusline`: writes the status line script and registers it in `~/.claude/settings.json`, so the terminal shows project, model and tokens. |
 | [release](release/) | `/release`: promotes the changelog's Unreleased section into a version, tags `main`, and publishes a GitHub Release with a short Highlights summary. |
