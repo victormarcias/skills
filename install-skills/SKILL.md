@@ -1,6 +1,7 @@
 ---
 name: install-skills
 description: Symlink the skills of the repo you are in (the current directory) into ~/.claude/skills, so every project on this machine loads them and edits in the repo are live. Use when the user asks to install, link or sync their skills to their user, or after a skill is added to or removed from the repo.
+model: sonnet
 ---
 
 # Install skills
