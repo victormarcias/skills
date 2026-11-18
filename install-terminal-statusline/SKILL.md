@@ -1,7 +1,7 @@
 ---
 name: install-terminal-statusline
 description: Install the Claude Code status line that shows project, model, a context bar with a red marker at 100K tokens, and tokens used in the terminal. Writes ~/.claude/statusline.sh and registers it in ~/.claude/settings.json. Use when the user asks to install, restore or fix the terminal status line, or sees no tokens in the terminal.
-model: sonnet
+model: haiku
 ---
 
 # Install terminal status line
