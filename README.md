@@ -6,6 +6,7 @@ Victor's own [Claude Code skills](https://code.claude.com/docs/en/skills), kept 
 
 | Skill | What it does |
 | --- | --- |
+| [brand-name-check](brand-name-check/) | `/brand-name-check`: scores proposed brand names against their purpose: brand fit, recall, audience, eyeballing, domains and SEO, with variants and a clear winner. |
 | [commit](commit/) | `/commit`: commits the current changes on the checked-out branch with one short message and no co-author line; pushes only if you say so. |
 | [groom](groom/) | `/groom`: walks through the open questions one at a time as multiple-choice questions, with tables or charts when they help, and applies each answer. |
 | [install-skills](install-skills/) | `/install-skills`: symlinks every skill of the folder you are in into `~/.claude/skills/` so they load in any project. |
