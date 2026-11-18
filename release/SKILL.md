@@ -1,17 +1,17 @@
 ---
 name: release
-description: Cut a new release of the current repo, working on dev and shipping through main. First run: promotes the CHANGELOG's Unreleased section (English and Spanish) into a dated version on dev and opens a "Release <tag>" PR into main. Run again after the PR is merged: tags main and publishes the GitHub Release.
+description: Cut a new release of the current repo, working on develop and shipping through main. First run: promotes the CHANGELOG's Unreleased section (English and Spanish) into a dated version on develop and opens a "Release <tag>" PR into main. Run again after the PR is merged: tags main and publishes the GitHub Release.
 ---
 
 # Release
 
-Runs only when the user invokes `/release`. The user works on `dev`, and
+Runs only when the user invokes `/release`. The user works on `develop`, and
 `main` only ever changes through a pull request, so a release takes two runs
 of the same command, and `/release` works out which one this is:
 
-- **Run 1 (prepare):** promotes the changelog on `dev`, pushes `dev` and opens
-  a `main` ← `dev` PR named after the new version, with its description
-  written, ready to merge.
+- **Run 1 (prepare):** promotes the changelog on `develop`, pushes `develop`
+  and opens a `main` ← `develop` PR named after the new version, with its
+  description written, ready to merge.
 - **Run 2 (publish), after the user merged that PR:** tags `main` and
   publishes the GitHub Release.
 
@@ -24,7 +24,7 @@ already present in the file), under a running `## [Unreleased]` section
 that gets promoted at release time. If a repo has no changelog yet, create
 both files in this format on first use.
 
-0. **Which run?** `git fetch origin main dev --tags`; there must be a
+0. **Which run?** `git fetch origin main develop --tags`; there must be a
    `github.com` remote and `gh auth status` must succeed (stop and say so if
    not). Read the first `## [x.y.z]` heading of `CHANGELOG.md` on
    `origin/main` (`git show origin/main:CHANGELOG.md`). If that version has no
@@ -33,23 +33,23 @@ both files in this format on first use.
 
 ## Run 1: prepare
 
-1. **Look first.** The checked-out branch must be `dev` and
-   `git status --short` must be clean; stop and say so if not. Bring `dev`
-   up to date with fast-forwards only: `git merge --ff-only origin/dev`,
-   then, if `dev` is an ancestor of `origin/main` (the merge commit of the
+1. **Look first.** The checked-out branch must be `develop` and
+   `git status --short` must be clean; stop and say so if not. Bring `develop`
+   up to date with fast-forwards only: `git merge --ff-only origin/develop`,
+   then, if `develop` is an ancestor of `origin/main` (the merge commit of the
    previous release PR), `git merge --ff-only origin/main`. If `main` has
-   commits `dev` lacks that are not just that merge commit, stop and say so.
+   commits `develop` lacks that are not just that merge commit, stop and say so.
    Then:
-   - If `git log --oneline <last-tag>..origin/dev` is empty, there is
+   - If `git log --oneline <last-tag>..origin/develop` is empty, there is
      nothing to release: say so and stop.
-   - If `gh pr list --base main --head dev` shows an open PR, give its link
+   - If `gh pr list --base main --head develop` shows an open PR, give its link
      and stop: the user merges it first.
 
 2. **Read the changelog's `## [Unreleased]` section** in `CHANGELOG.md`
    (and the mirrored one in `CHANGELOG.es.md`). This is the content to
    release — it was written as the work happened, so don't regenerate it
    from `git log`. Only if it is empty or the files don't exist yet, build
-   it from `git log <last-tag>..origin/dev --oneline`, grouped into the same
+   it from `git log <last-tag>..origin/develop --oneline`, grouped into the same
    categories, each entry a bold lead-in label plus a short sentence,
    matching the house style already in the file.
 
@@ -80,13 +80,13 @@ both files in this format on first use.
    `[<tag>]: <repo-url>/compare/<previous-tag>...<tag>` (or
    `<repo-url>/releases/tag/<tag>` when there is no previous tag).
 
-7. **Commit the changelog files** on `dev`, one short message
+7. **Commit the changelog files** on `develop`, one short message
    (`Updates CHANGELOG for <tag>.`), following the `commit` skill's
    conventions.
 
-8. **Push `dev` and open the PR.** Invoking `/release` is the permission to
-   push `dev` for this. Write the description to a temp file and run
-   `gh pr create --base main --head dev --title "Release <tag>"
+8. **Push `develop` and open the PR.** Invoking `/release` is the permission to
+   push `develop` for this. Write the description to a temp file and run
+   `gh pr create --base main --head develop --title "Release <tag>"
    --body-file <file>`. The description has no "Generated with Claude Code"
    line and contains:
    - `## Highlights`: a short summary, not a copy of the changelog section:
@@ -96,14 +96,14 @@ both files in this format on first use.
    - A closing block:
 
      ```markdown
-     **Full changelog:** [CHANGELOG.md](<repo-url>/blob/dev/CHANGELOG.md) ·
-     [Español](<repo-url>/blob/dev/CHANGELOG.es.md)
+     **Full changelog:** [CHANGELOG.md](<repo-url>/blob/develop/CHANGELOG.md) ·
+     [Español](<repo-url>/blob/develop/CHANGELOG.es.md)
 
      **Compare:** <repo-url>/compare/<previous-tag>...<tag>
      ```
 
    - A last line: merge with "Create a merge commit" (never squash or
-     rebase, which would make `dev` diverge from `main`).
+     rebase, which would make `develop` diverge from `main`).
 
 9. **Report**, in the chat's language and nothing else: the new tag, the
    previous tag (or "first release"), the bump level chosen and why, and the
@@ -112,8 +112,8 @@ both files in this format on first use.
 
 ## Run 2: publish (the release PR is merged)
 
-10. **Check** that `git merge-base --is-ancestor origin/dev origin/main`
-    passes; if not, `main` is missing commits from `dev`: say so and stop.
+10. **Check** that `git merge-base --is-ancestor origin/develop origin/main`
+    passes; if not, `main` is missing commits from `develop`: say so and stop.
     Tag `main` without checking it out: `git tag -a <tag> origin/main -m
     "<tag>"` then `git push origin <tag>`, where `<tag>` is the version found
     in step 0. This is the one tag action the skill does without asking; it
@@ -121,11 +121,11 @@ both files in this format on first use.
 
 11. **Publish the GitHub Release** with the same `## Highlights` summary as
     the PR description (one emoji bullet per notable change; reuse it from
-    the merged PR's body, `gh pr list --base main --head dev --state merged
+    the merged PR's body, `gh pr list --base main --head develop --state merged
     --limit 1 --json body`), closing with the full-changelog and compare
     links, pointing at `main`. Write it to a temp file and run `gh release
     create <tag> --title "<tag>" --notes-file <file> --target main`.
 
-12. **Report**: the tag and the release URL `gh` returns. `dev` is already
+12. **Report**: the tag and the release URL `gh` returns. `develop` is already
     inside `main`, so it needs no sync; if the user wants both identical,
-    `git merge --ff-only origin/main` on `dev` does it.
+    `git merge --ff-only origin/main` on `develop` does it.
