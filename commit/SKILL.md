@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Commit the current changes the way the user wants: on the branch already checked out, with the default git author, one very short message and no Claude co-author or attribution line. Runs only when the user invokes /commit: never commit on your own initiative, because the user reads the diff first.
+description: "Commit the current changes the way the user wants: on the branch already checked out, with the default git author, one very short message and no Claude co-author or attribution line. Runs only when the user invokes /commit: never commit on your own initiative, because the user reads the diff first."
 model: sonnet
 ---
 
