@@ -1,6 +1,7 @@
 ---
 name: release
 description: "Cut a new release of the current repo, working on develop and shipping through main. First run: promotes the CHANGELOG's Unreleased section (English and Spanish) into a dated version on develop and opens a \"Release <tag>\" PR into main. Run again after the PR is merged: tags main and publishes the GitHub Release."
+model: opus
 ---
 
 # Release

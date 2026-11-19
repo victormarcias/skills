@@ -1,6 +1,7 @@
 ---
 name: groom
 description: Walk the user through the open questions and pending decisions one at a time, each as a multiple-choice question with options, backed by a table or chart when that makes the choice clearer. Use when the user runs /groom, usually after a report that left several questions open.
+model: opus
 ---
 
 # Groom

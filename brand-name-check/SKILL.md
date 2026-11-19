@@ -2,6 +2,7 @@
 name: brand-name-check
 description: Score and critique one or more proposed brand, company, product or tool names against the brand's purpose (what it is, for whom, with what tone). Weighted scorecard covering brand fit, recall, audience, eyeballing and digital assets (domains checked, SEO confusion risk), then friction analysis, variants and a clear winner. Use when the user runs /brand-name-check, proposes names, or asks whether a name fits their positioning.
 argument-hint: <name(s)> [-- brand purpose] [--alternatives] [--pdf]
+model: opus
 ---
 
 # Brand name check
