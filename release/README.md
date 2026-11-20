@@ -13,7 +13,8 @@ PR, so it takes two runs. The first, from a clean `develop`:
 
 You merge the PR with "Create a merge commit" (never squash or rebase, so
 `develop` stays inside `main`) and run `/release` again: this time it tags
-`main` and publishes the GitHub Release with the same Highlights. It never merges,
+`main` and publishes the GitHub Release with the same Highlights. It never
+merges,
 pushes to `main` or switches branches.
 
 It needs a GitHub remote and `gh` signed in; pass an explicit bump or
