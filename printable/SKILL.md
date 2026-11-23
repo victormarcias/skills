@@ -1,15 +1,15 @@
 ---
 name: printable
-description: "Turn a study file (slideshow, doc, PDF) into a plain printable document for a black and white laser printer: headers, bullets, tables, regular fonts, no backgrounds. Never sends anything to the printer. Use when the user runs /printable or /printable custom."
+description: "Turn a file (slideshow, doc, PDF) into a plain printable PDF for a black and white laser printer: headers, bullets, tables, regular fonts, no backgrounds. Never sends anything to the printer. Use when the user runs /printable or /printable custom."
 model: sonnet
 ---
 
 # Printable
 
-Input: a folder (a path, or a name under the `STUDY_ROOT` environment
-variable), plus the optional `custom` parameter. The result is always a
-`<name> - printable.pdf` next to the chosen file. Never run `lp` or send
-anything to the printer: Victor prints the PDF himself.
+Input: a path to a file or to a folder, plus the optional `custom`
+parameter. The result is always a `<name> - printable.pdf` next to the
+chosen file. Never run `lp` or send anything to the printer: Victor prints
+the PDF himself.
 
 ## Format
 
@@ -41,12 +41,17 @@ answers.
 
 ## Steps
 
-1. Resolve the folder. If it is a name, look for it under `STUDY_ROOT`;
-   if the variable is empty, ask for the path and stop. List the files in
-   the folder, leaving out summaries and printables already built, and ask
-   which one to build (multiple choice).
+1. Resolve the input. With no path, ask for one and stop. A file is used
+   as is. For a folder, browse it one level at a time, like a file picker:
+   list the subfolders and files of the current level, leaving out
+   summaries and printables already built, and ask which one (multiple
+   choice). A subfolder opens the next level. A file ends the browsing.
+   With more than four entries, show the first four and offer "More" for
+   the next ones. Never ask for a file from a flat list of the whole tree.
 2. Extract the text of the file (`pypdf` for PDF). Look at the pages that
-   have no text, since they hold diagrams or charts.
+   have no text, since they hold diagrams or charts. An image (PNG, JPG)
+   is not converted to text: it goes on one page, scaled to fit inside the
+   margins, in grayscale.
 3. Write the document as HTML in the scratchpad, following the format.
 4. Render it to `<name> - printable.pdf` in the file's folder with Chrome
    headless (`--print-to-pdf --no-pdf-header-footer`) and give its path.
