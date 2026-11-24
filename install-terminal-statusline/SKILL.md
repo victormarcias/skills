@@ -22,9 +22,9 @@ script is in this file: nothing is copied from anywhere else.
    `"context_window":{"total_input_tokens":1500,"total_output_tokens":20,`
    `"context_window_size":200000}}`
    It must print
-   `demo · M · ░░░░░░░░░░▼░░░░░░░░░░ ↑1.5k ↓20`, with demo in white, ↑1.5k in
-   cyan, ↓20 in magenta and the ▼ in red (no git segment, since the sample
-   folder is not a repo). If `jq` is missing, say so and stop.
+   `demo · M · ░░░░░░░░░░▼░░░░░░░░░░ ↓1.5k ↑20`, with demo in white, ↓1.5k in
+   cyan, ↑20 in Claude orange and the ▼ in red (no git segment, since the
+   sample folder is not a repo). If `jq` is missing, say so and stop.
 4. **Report** in one line whether the script and the setting were created,
    updated or already in place. The status line shows up in the next session.
 
@@ -35,6 +35,12 @@ ahead of or behind the remote.
 The bar spans the whole context window. The red ▼ marks 100K tokens, where
 the quality of the answers starts to drop, and the part of the bar past it
 turns red.
+
+`↓` is the input of the current call, the context the bar measures. `↑` is the
+output generated in the whole session, summed from the transcript.
+
+After the tokens, a green `$` amount is the estimated cost of the session, as
+`/usage` reports it. It is hidden when Claude Code sends no cost.
 
 ```bash
 #!/usr/bin/env bash
@@ -82,7 +88,7 @@ white=$'\033[97m'
 green=$'\033[32m'
 yellow=$'\033[33m'
 cyan=$'\033[36m'
-magenta=$'\033[35m'
+orange=$'\033[38;2;217;119;87m'  # Claude orange
 reset=$'\033[0m'
 
 # 1234 -> 1.2k, 1234567 -> 1.2M
@@ -109,7 +115,27 @@ for (( i = 0; i < width; i++ )); do
   fi
 done
 
+# ↑ is the output of every call in the session, summed from the transcript
+# (Claude Code only sends the last call's). Without a transcript it keeps that.
+transcript=$(echo "$input" | jq -r '.transcript_path // ""')
+if [ -f "$transcript" ]; then
+  total_out=$(jq -nR '
+    [inputs | fromjson? | select(.type == "assistant" and .message.usage)]
+    | unique_by(.message.id)
+    | map(.message.usage.output_tokens // 0)
+    | add // 0' "$transcript" 2>/dev/null)
+  [ "${total_out:-0}" -gt 0 ] 2>/dev/null && tokens_out=$total_out
+fi
+
+# Estimated session cost in USD, hidden when Claude Code sends none.
+cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
+cost_seg=""
+if [ -n "$cost" ]; then
+  amount=$(LC_ALL=C awk -v c="$cost" 'BEGIN { printf "%.2f", c }')
+  cost_seg=" · ${green}\$$amount${reset}"
+fi
+
 echo "${white}${project}${reset}$git_seg · $model · $bar" \
-  "${cyan}↑$(fmt "$tokens_in")${reset}" \
-  "${magenta}↓$(fmt "$tokens_out")${reset}"
+  "${cyan}↓$(fmt "$tokens_in")${reset}" \
+  "${orange}↑$(fmt "$tokens_out")${reset}$cost_seg"
 ```
