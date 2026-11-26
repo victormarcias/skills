@@ -11,6 +11,7 @@ Victor's own [Claude Code skills](https://code.claude.com/docs/en/skills), kept 
 | [groom](groom/) | `/groom`: walks through the open questions one at a time as multiple-choice questions, with tables or charts when they help, and applies each answer. |
 | [install-pr-agent](install-pr-agent/) | `/install-pr-agent`: adds the PR Agent workflow to the current repo, so every pull request gets a review from PR-Agent on DeepSeek. |
 | [install-skills](install-skills/) | `/install-skills`: symlinks every skill of the folder you are in into `~/.claude/skills/` so they load in any project. |
+| [install-sponsor](install-sponsor/) | `/install-sponsor`: adds `.github/FUNDING.yml` to the current repo, so GitHub shows the Sponsor button with GitHub Sponsors and Cafecito. |
 | [install-terminal-statusline](install-terminal-statusline/) | `/install-terminal-statusline`: writes the status line script and registers it in `~/.claude/settings.json`, so the terminal shows project, model and tokens. |
 | [printable](printable/) | `/printable`: turns a file (slideshow, doc, PDF) into an ink-saving PDF for a black and white laser printer, without sending anything to the printer. |
 | [release](release/) | `/release`: promotes the changelog's Unreleased section into a version, tags `main`, and publishes a GitHub Release with a short Highlights summary. |
