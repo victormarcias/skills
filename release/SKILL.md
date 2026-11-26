@@ -87,7 +87,7 @@ both files in this format on first use.
 
 8. **Push `develop` and open the PR.** Invoking `/release` is the permission to
    push `develop` for this. Write the description to a temp file and run
-   `gh pr create --base main --head develop --title "Release <tag>"
+   `gh pr create --base main --head develop --title "🤖 Release <tag>"
    --body-file <file>`. The description has no "Generated with Claude Code"
    line and contains:
    - `## Highlights`: a short summary, not a copy of the changelog section:
