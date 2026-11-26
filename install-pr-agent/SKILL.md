@@ -8,7 +8,9 @@ model: haiku
 
 Copies `pr_agent.yml`, next to this file, into the current repo. The
 workflow reviews each pull request with PR-Agent and DeepSeek, and answers
-PR comments addressed to it.
+PR comments addressed to it from the repo's owner. The action is pinned to
+the commit of a PR-Agent release: to upgrade it, replace the SHA and the
+version in its comment with those of a newer release.
 
 1. **Check the repo.** Run from the repo's root. Stop if it is not a git
    repo, has no GitHub remote, or is a fork (`gh repo view --json isFork`).
